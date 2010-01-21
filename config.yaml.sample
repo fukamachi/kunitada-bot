@@ -1,0 +1,6 @@
+user:
+  username: "kunitada_bot"
+  password: "password"
+
+morphem:
+  appid: "yahoo-morphem-appid"
