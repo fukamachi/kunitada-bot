@@ -1,0 +1,4 @@
+cron:
+- description: kunitadize a random tweet
+  url: /cron/kunitadize
+  schedule: every 30 minutes

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<cronentries>
-  <cron>
-    <url>/cron/kunitadize</url>
-    <description>kunitadize a random tweet</description>
-    <schedule>every 30 minutes</schedule>
-  </cron>
-</cronentries>
