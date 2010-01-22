@@ -11,7 +11,6 @@ NOUN = '名詞'
 AUXI = '助動詞'
 CONJ = '接続助詞'
 SURU = '助動詞する'
-SAISOKU = '最速で'
 
 before do
   @conf = YAML.load_file('config.yaml')
@@ -25,7 +24,8 @@ get '/cron/kunitadize' do
   return 'ツイートがありませんでした。' if tweets.empty?
 
   while tweet = tweets.shuffle.shift
-    kunitadized = kunitadize(tweet['text'])
+    next if tweet =~ /最速で/
+    kunitadized = kunitadize(tweet['text'], tweet['user']['screen_name'])
     if tweet['text'] != kunitadized
       @twitter.update(sprintf("@%s が最速で呟いた: %s", tweet['user']['screen_name'], kunitadized), tweet['id'])
       break
@@ -35,11 +35,12 @@ get '/cron/kunitadize' do
   return
 end
 
-def kunitadize(sentence)
+def kunitadize(sentence, screen_name)
   url = 'http://jlp.yahooapis.jp/DAService/V1/parse'
   url += "?appid=#@appid&sentence=#{URI.escape(sentence)}"
   res = AppEngine::URLFetch.fetch(url)
   doc = REXML::Document.new(res.body)
+  saisoku = screen_name == 'kunitada' ? '超最速で' : '最速で'
 
   text = ''
   chunk_list = []
@@ -65,13 +66,13 @@ def kunitadize(sentence)
          should_insert = false
       end
 
-      text += SAISOKU if should_insert
+      text += saisoku if should_insert
     else
       morphem_list.each_with_index do |morphem, i|
         next unless morphem_list[i + 1]
         if (morphem['feature'][0] == NOUN and
             morphem_list[i + 1]['feature'][1] == SURU)
-            text += SAISOKU
+            text += saisoku
         end
       end
     end
