@@ -27,7 +27,7 @@ get '/cron/kunitadize' do
   while tweet = tweets.shuffle.shift
     kunitadized = kunitadize(tweet['text'])
     if tweet['text'] != kunitadized
-      @twitter.update(sprintf("%s が最速で呟いた: %s", tweet['user']['screen_name'], kunitadized), tweet['id'])
+      @twitter.update(sprintf("@%s が最速で呟いた: %s", tweet['user']['screen_name'], kunitadized), tweet['id'])
       break
     end
   end
