@@ -9,7 +9,7 @@ class Twitter
 
   def update(body, in_reply_to)
     url = 'http://twitter.com/statuses/update.json'
-    request(url, 'POST', { :payload => "status=#{body}&in_reply_to=#{in_reply_to}" })
+    request(url, 'POST', { :payload => "status=#{body}&in_reply_to_status_id=#{in_reply_to}" })
   end
 
   def friends_timeline(screen_name)
