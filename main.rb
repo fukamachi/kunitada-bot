@@ -26,8 +26,8 @@ get '/cron/kunitadize' do
   while tweet = tweets.shuffle.shift
     next if tweet =~ /最速で/
     kunitadized = kunitadize(tweet['text'], tweet['user']['screen_name'])
-    if tweet['text'] != kunitadized
-      @twitter.update(sprintf("@%s が最速で呟いた: %s", tweet['user']['screen_name'], kunitadized), tweet['id'])
+    if tweet['text'] != kunitadized and tweet['text'] !~ /^#{kunitadized}/
+      @twitter.update(sprintf("@%s が%s呟いた: %s", tweet['user']['screen_name'], get_saisoku(tweet['user']['screen_name']), kunitadized), tweet['id'])
       break
     end
   end
@@ -40,7 +40,7 @@ def kunitadize(sentence, screen_name)
   url += "?appid=#@appid&sentence=#{URI.escape(sentence)}"
   res = AppEngine::URLFetch.fetch(url)
   doc = REXML::Document.new(res.body)
-  saisoku = screen_name == 'kunitada' ? '超最速で' : '最速で'
+  saisoku = get_saisoku(screen_name)
 
   text = ''
   chunk_list = []
@@ -84,4 +84,8 @@ def kunitadize(sentence, screen_name)
     chunk_list.push(morphem_list)
   end
   return text
+end
+
+def get_saisoku(screen_name)
+  screen_name == 'kunitada' ? '超最速で' : '最速で'
 end
